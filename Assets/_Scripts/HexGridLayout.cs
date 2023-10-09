@@ -41,7 +41,18 @@ public class HexGridLayout : MonoBehaviour
             for (int x = 0; x < gridSize.x; x++)
             {
                 // Remove Random Height Later
-                height = Random.Range(0.1f, 1f);
+
+                int randomNum = Random.Range(0, 3);
+
+                if (randomNum == 2)
+                {
+                    height = 0.5f;
+                }
+                else
+                {
+                    height = 0.1f;
+                }
+
 
                 GameObject tile = new GameObject($"Hex {x},{y}", typeof(HexRenderer));
                 tile.transform.position = GetPositionForHexFromCoordinate(new Vector2Int(x, y));
@@ -52,7 +63,7 @@ public class HexGridLayout : MonoBehaviour
                 hexRenderer.height = height;
                 hexRenderer.isFlatTopped = isFlatTopped;
                 hexRenderer.material = hexMaterial;
-                hexRenderer.tileColor = tileColor[Random.Range(0, 3)];
+                hexRenderer.tileColor = tileColor[randomNum];
 
                 hexRenderer.SetMaterial();
                 hexRenderer.DrawMesh();
