@@ -35,6 +35,7 @@ public class HexRenderer : MonoBehaviour
     public bool isFlatTopped;
 
     public Color tileColor;
+    public int colorNum;
 
     private void Awake()
     {

@@ -48,6 +48,10 @@ public class UnitSelection : MonoBehaviour
 
         infoPanel.SetActive(true);
 
+        if (unitToAdd.TryGetComponent(out Unit unit))
+        {
+            unit.UpdateStats();
+        }
 
     }
 

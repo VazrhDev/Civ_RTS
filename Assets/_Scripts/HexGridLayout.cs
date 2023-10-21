@@ -64,6 +64,20 @@ public class HexGridLayout : MonoBehaviour
                 hexRenderer.isFlatTopped = isFlatTopped;
                 hexRenderer.material = hexMaterial;
                 hexRenderer.tileColor = tileColor[randomNum];
+                hexRenderer.colorNum = randomNum;
+                hexRenderer.AddComponent<MeshCollider>();
+
+                if (x < 8 && y < 5)
+                {
+                    hexRenderer.tileColor = tileColor[3];
+                    hexRenderer.colorNum = 3;
+                }
+
+                if (x < 14 && x >= 10 && y < 14 && y >= 11)
+                {
+                    hexRenderer.tileColor = tileColor[4];
+                    hexRenderer.colorNum = 4;
+                }
 
                 hexRenderer.SetMaterial();
                 hexRenderer.DrawMesh();
