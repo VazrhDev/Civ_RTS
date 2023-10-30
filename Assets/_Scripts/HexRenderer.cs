@@ -36,6 +36,13 @@ public class HexRenderer : MonoBehaviour
 
     public Color tileColor;
     public int colorNum;
+    public int temperature;
+    public int transferRate;
+
+    public Vector2Int offsetCoordinate;
+    public Vector3Int cubeCoordinate;
+
+    public List<HexRenderer> neighbours;
 
     private void Awake()
     {
@@ -47,6 +54,9 @@ public class HexRenderer : MonoBehaviour
 
         meshFilter.mesh = mesh;
         meshRenderer.material = material;
+
+        temperature = Random.Range(-1, 1);
+        transferRate = Random.Range(-1, 1);
     }
 
     private void OnEnable()
@@ -155,5 +165,46 @@ public class HexRenderer : MonoBehaviour
         mesh.triangles = tris.ToArray();
         mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
+    }
+
+
+    public void OffsetToCube()
+    {
+        Vector2Int offset = offsetCoordinate;
+        var q = offset.x - (offset.y + (offset.y % 2)) / 2;
+        var r = offset.y;
+
+        cubeCoordinate = new Vector3Int(q, r, -q - r);
+    }
+
+    private bool isSelected = false;
+
+    public void SelectNode()
+    {
+        isSelected = !isSelected;
+
+        if (isSelected)
+        {
+            meshRenderer.material.color = Color.white;
+        }
+        else
+        {
+            meshRenderer.material.color = tileColor;
+        }
+
+        DrawMesh();
+
+        TileManager.Instance.SelectNode(this);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        foreach (HexRenderer neighbour in neighbours)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(transform.position, 0.1f);
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(transform.position, neighbour.transform.position);
+        }
     }
 }

@@ -19,8 +19,14 @@ public class HexGridLayout : MonoBehaviour
 
     [SerializeField] private Color[] tileColor;
 
+    private HexRenderer[,] hexRenderersList;
+    public int overallTemp = -5;
+
+
     private void OnEnable()
     {
+        hexRenderersList = new HexRenderer[gridSize.x, gridSize.y];
+
         LayoutGrid();
     }
 
@@ -36,6 +42,7 @@ public class HexGridLayout : MonoBehaviour
 
     private void LayoutGrid()
     {
+
         for (int y = 0; y < gridSize.y; y++)
         {
             for (int x = 0; x < gridSize.x; x++)
@@ -67,22 +74,107 @@ public class HexGridLayout : MonoBehaviour
                 hexRenderer.colorNum = randomNum;
                 hexRenderer.AddComponent<MeshCollider>();
 
-                if (x < 8 && y < 5)
+                //if (x < 8 && y < 5)
+                //{
+                //    hexRenderer.tileColor = tileColor[3];
+                //    hexRenderer.colorNum = 3;
+                //}
+
+                //if (x < 14 && x >= 10 && y < 14 && y >= 11)
+                //{
+                //    hexRenderer.tileColor = tileColor[4];
+                //    hexRenderer.colorNum = 4;
+                //}
+
+                if (x == 0 && y == 0)
+                {
+                    hexRenderer.temperature = overallTemp;
+                }
+
+                else if (x == 0 && y > 0)
+                {
+                    HexRenderer lastHex = hexRenderersList[x, y - 1];
+
+                    int chance = hexRenderer.transferRate + lastHex.transferRate;
+
+                    if (chance == 0)
+                    {
+                        hexRenderer.temperature = lastHex.temperature;
+                    }
+                    else if (chance < 0)
+                    {
+                        if (overallTemp >= -5)
+                            hexRenderer.temperature = Mathf.Abs(lastHex.temperature) - hexRenderer.temperature;
+                        else
+                        {
+                            hexRenderer.temperature = -5;
+                        }
+
+                    }
+                    else
+                    {
+                        overallTemp = overallTemp + Random.Range(0, 10);
+
+                        hexRenderer.temperature = overallTemp;
+                    }
+                }
+
+                else if (x > 0) 
+                {
+                    HexRenderer lastHex = hexRenderersList[x - 1, y];
+
+                    //int tempDiff = (hexRenderer.temperature - lastHex.temperature) * (hexRenderer.transferRate + lastHex.transferRate);
+
+                    //hexRenderer.temperature = hexRenderer.temperature - tempDiff;
+
+                    int chance = hexRenderer.transferRate + lastHex.transferRate;
+
+                    if (chance == 0)
+                    {
+                        hexRenderer.temperature = lastHex.temperature;
+                    }
+                    else if (chance < 0) 
+                    {
+                        if (overallTemp >= -5)
+                            hexRenderer.temperature = Mathf.Abs(lastHex.temperature) - hexRenderer.temperature;
+                        else
+                        {
+                            hexRenderer.temperature = -5;
+                        }
+                    }
+                    else
+                    {
+                        overallTemp = overallTemp + Random.Range(0, 10);
+
+                        hexRenderer.temperature = overallTemp;
+                    }
+                }
+
+                // Upadte hex color
+
+                if (hexRenderer.temperature <= 7)
                 {
                     hexRenderer.tileColor = tileColor[3];
                     hexRenderer.colorNum = 3;
                 }
 
-                if (x < 14 && x >= 10 && y < 14 && y >= 11)
+                else if (hexRenderer.temperature >= 20)
                 {
                     hexRenderer.tileColor = tileColor[4];
                     hexRenderer.colorNum = 4;
                 }
 
+                
                 hexRenderer.SetMaterial();
                 hexRenderer.DrawMesh();
 
                 tile.transform.SetParent(transform, true);
+
+                hexRenderersList[x, y] = hexRenderer;
+
+
+                hexRenderer.offsetCoordinate = new Vector2Int(x, y);
+                hexRenderer.OffsetToCube();
             }
         }
     }

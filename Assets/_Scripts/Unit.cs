@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Unit : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class Unit : MonoBehaviour
     [SerializeField] private TMP_Text attackText;
     [SerializeField] private TMP_Text defenceText;
     [SerializeField] private TMP_Text landTypeText;
+
+    [SerializeField] private LineRenderer renderer;
+    [SerializeField] private NavMeshAgent agent;
+
+    public HexRenderer currentNode;
 
     public LayerMask hitLayer;
 
@@ -42,25 +48,9 @@ public class Unit : MonoBehaviour
 
             if (hit.transform.TryGetComponent(out HexRenderer hex))
             {
-                Debug.Log(hex.colorNum);
+                landTypeText.text = hex.temperature.ToString();
 
-                switch (hex.colorNum)
-                {
-                    case 3:
-                        landTypeText.text = "C";
-
-                        break;
-
-                    case 4:
-                        landTypeText.text = "W";
-
-                        break;
-
-                    default:
-                        landTypeText.text = "N";
-
-                        break;
-                }
+                currentNode = hex;
             }
         }
 
@@ -71,30 +61,43 @@ public class Unit : MonoBehaviour
         UnitSelection.Instance.unitList.Remove(this.gameObject);
     }
 
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if (other.TryGetComponent(out HexRenderer hex))
-    //    {
-    //        switch (hex.colorNum)
-    //        {
+    protected void UpdateLineRenderer(List<HexTile> tiles)
+    {
+        if (renderer == null)
+            return;
 
-    //            case 2:
-    //                landTypeText.text = "C";
+        List<Vector3> points = new List<Vector3>();
+        foreach (HexTile tile in tiles)
+        {
+            points.Add(tile.transform.position + new Vector3(0, 0.5f, 0));
 
-    //                break;
+            renderer.positionCount = points.Count;
+            renderer.SetPositions(points.ToArray());
+        }
+    }
 
-    //            case 3:
-    //                landTypeText.text = "W";
+    public void HandleMovement()
+    {
+        //if (currentPath == null || currentPath <= 1)
+        //{
+        //    nextTile = null;
 
-    //                break;
+        //    if (currentTile != null && currentPath > 0)
+        //    {
+        //        currentTile = currentPath[0];
+        //        nextTile = currentTile;
+        //    }
 
-    //            default:
-    //                landTypeText.text = "N";
+        //    gotPath = false;
 
-    //                break;
-    //        }
-    //    }
-    //}
+        //    UpdateLineRenderer(new List<HexTile>());
+        //}
+    }
 
+    public void MoveUnit(Vector3 destination)
+    {
+        //transform.Translate(destination);
 
+        agent.SetDestination(destination);
+    }
 }

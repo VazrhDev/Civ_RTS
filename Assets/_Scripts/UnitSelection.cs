@@ -51,6 +51,8 @@ public class UnitSelection : MonoBehaviour
         if (unitToAdd.TryGetComponent(out Unit unit))
         {
             unit.UpdateStats();
+
+            TileManager.Instance.SelectUnit(unit);
         }
 
     }
