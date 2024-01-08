@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnitAnimator : MonoBehaviour
 {
 
-    [SerializeField] private Animator animator;
+    [SerializeField] private List<Animator> animatorList;
     [SerializeField] private Transform bulletProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
     [SerializeField] private Transform rifleTransform;
@@ -46,22 +46,36 @@ public class UnitAnimator : MonoBehaviour
     private void SwordAction_OnSwordActionStarted(object sender, EventArgs e)
     {
         EquipSword();
-        animator.SetTrigger("SwordSlash");
+
+        foreach(Animator animator in animatorList)
+        {
+            animator.SetTrigger("SwordSlash");
+        }
+
     }
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {
-        animator.SetBool("IsWalking", true);
+        foreach (Animator animator in animatorList)
+        {
+            animator.SetBool("IsWalking", true);
+        }
     }
 
     private void MoveAction_OnStopMoving(object sender, EventArgs e)
     {
-        animator.SetBool("IsWalking", false);
+        foreach (Animator animator in animatorList)
+        {
+            animator.SetBool("IsWalking", false);
+        }
     }
 
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
-        animator.SetTrigger("Shoot");
+        foreach (Animator animator in animatorList)
+        {
+            animator.SetTrigger("Shoot");
+        }
 
         Transform bulletProjectileTransform = 
             Instantiate(bulletProjectilePrefab, shootPointTransform.position, Quaternion.identity);
