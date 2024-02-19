@@ -41,10 +41,13 @@ public class EnemyAI : MonoBehaviour
                 timer -= Time.deltaTime;
                 if (timer <= 0f)
                 {
+                    TurnSystem.Instance.NextTurn();
+
                     if (TryTakeEnemyAIAction(SetStateTakingTurn))
                     {
                         state = State.Busy;
-                    } else
+                    }
+                    else
                     {
                         // No more enemies have actions they can take, end enemy turn
                         TurnSystem.Instance.NextTurn();
@@ -113,6 +116,7 @@ public class EnemyAI : MonoBehaviour
             }
 
         }
+
 
         if (bestEnemyAIAction != null && enemyUnit.TrySpendActionPointsToTakeAction(bestBaseAction))
         {

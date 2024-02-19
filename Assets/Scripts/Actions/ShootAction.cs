@@ -204,7 +204,7 @@ public class ShootAction : BaseAction
         return new EnemyAIAction
         {
             gridPosition = gridPosition,
-            actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f),
+            actionValue = 0 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 0f),
         };
     }
 
