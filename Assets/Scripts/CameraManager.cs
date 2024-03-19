@@ -2,19 +2,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class CameraManager : MonoBehaviour
 {
     
     [SerializeField] private GameObject actionCameraGameObject;
 
+    [SerializeField] private GameObject monumentFoundTimelineGameObject;
+    [SerializeField] private PlayableDirector monumentFoundTimeline;
+    [SerializeField] private MonumentFoundVisual monumentFoundVisual;
+
     private void Start()
     {
         BaseAction.OnAnyActionStarted += BaseAction_OnAnyActionStarted;
         BaseAction.OnAnyActionCompleted += BaseAction_OnAnyActionCompleted;
 
+        GameEventsHandler.Instance.OnMonumentFound += Instance_OnMonumentFound;
+
+        monumentFoundTimeline.stopped += MonumentFoundTimeline_stopped;
+
         HideActionCamera();
     }
+
 
     private void ShowActionCamera()
     {
@@ -63,5 +73,26 @@ public class CameraManager : MonoBehaviour
                 HideActionCamera();
                 break;
         }
+    }
+
+
+    private void Instance_OnMonumentFound(object sender, EventArgs e)
+    {
+        GameObject monument = sender as GameObject;
+        //monumentFoundTimelineGameObject.transform.SetLocalPositionAndRotation(monument.transform.position, Quaternion.identity);
+        //monumentFoundTimelineGameObject.SetActive(true);
+
+        monumentFoundTimeline.gameObject.SetActive(true);
+        monumentFoundTimeline.transform.SetLocalPositionAndRotation(monument.transform.position, Quaternion.identity);
+        monumentFoundTimeline.Play();
+
+        monumentFoundVisual.ShowMonumentFoundText();
+    }
+
+    private void MonumentFoundTimeline_stopped(PlayableDirector obj)
+    {
+        monumentFoundTimeline.gameObject.SetActive(false);
+
+        monumentFoundVisual.HideMonumentFoundText();
     }
 }
